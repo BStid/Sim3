@@ -1,0 +1,12 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+a {
+  overflow: hidden;
+}
+a:active,
+a:visited,
+a:focus {
+  text-decoration: none;
+}
