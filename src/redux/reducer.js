@@ -1,12 +1,12 @@
 import axios from "axios";
 
 //ACTION TYPES
-const GET_USER = "GET_USER";
+const CHECK_USER = "CHECK_USER";
 const UPDATE_INPUT = "UPDATE_INPUT";
 
 //INITIAL STATE
 const initialState = {
-  user: [],
+  user: "",
   usernameInput: "",
   passwordInput: ""
 };
@@ -17,39 +17,38 @@ export const updateInput = input => {
     payload: input
   };
 };
-//GET
-export const getUser = () => {
+//POST
+export const checkUser = (username, password) => {
   return {
-    type: GET_USER,
-    payload: axios.get("/api/user")
+    type: CHECK_USER,
+    payload: axios.post("/api/user", { username, password })
   };
 };
 //REDUCER
 export default function reducer(state = initialState, action) {
+  console.log(action.type);
   switch (action.type) {
     case UPDATE_INPUT:
-      console.log(
-        "passing reducer...",
-        action.payload.target.name,
-        action.payload.target.value
-      );
+      console.log(action.payload.target.name, action.payload.target.value);
       return {
         ...state,
         [action.payload.target.name]: action.payload.target.value
       };
-    case `${GET_USER}_PENDING`:
-      return {
-        ...state
-      };
-    case `${GET_USER}_FULFILLED`:
-      console.log(action.payload);
+    case `${CHECK_USER}_PENDING`:
       return {
         ...state,
-        user: action.payload
+        user: ""
       };
-    case `${GET_USER}_REJECTED`:
+    case `${CHECK_USER}_FULFILLED`:
+      console.log(action.payload.data);
       return {
-        ...state
+        ...state,
+        user: action.payload.data
+      };
+    case `${CHECK_USER}_REJECTED`:
+      return {
+        ...state,
+        user: ""
       };
   }
 }

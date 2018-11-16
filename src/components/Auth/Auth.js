@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { getUser, updateInput } from "../../redux/reducer";
+import { checkUser, updateInput } from "../../redux/reducer";
 import smile from "./pictures/smile.png";
 import "./Auth.css";
 
@@ -11,19 +11,25 @@ class Auth extends Component {
     this.state = {};
     this.checkUser = this.checkUser.bind(this);
   }
-  checkUser() {
+  async checkUser() {
     const { usernameInput, passwordInput, user } = this.props;
     console.log(user);
-
-    this.props.getUser(usernameInput, passwordInput);
-    user
+    console.log(usernameInput);
+    await this.props.checkUser(usernameInput, passwordInput);
+    console.log(user);
+    await this.evaluateUsername();
+    console.log(user);
+  }
+  evaluateUsername() {
+    const { user, usernameInput } = this.props;
+    user === usernameInput
       ? alert("Success")
       : alert("Username or Password Incorrect, please sign up.");
   }
-
   //TODO WHEN YOU GET BACK: Look up ways to redirect based off of true/false when button is pressed. Google 'redirect based on password'
   //TODO: Fix checkUser to actually check the right value of user instead of automatically going to true;
   render() {
+    const { usernameInput, passwordInput, user } = this.props;
     return (
       <div className="authOuter">
         <div className="authLoginContainer">
@@ -49,7 +55,7 @@ class Auth extends Component {
             <button
               className="button"
               id="login"
-              onClick={() => this.checkUser()}
+              onClick={() => this.checkUser(usernameInput, passwordInput)}
             >
               Login
             </button>{" "}
@@ -63,12 +69,15 @@ class Auth extends Component {
   }
 }
 
-const mapStateToProps = state => state;
+const mapStateToProps = state => {
+  console.log(state);
+  return state;
+};
 
 export default connect(
   mapStateToProps,
   {
-    getUser,
+    checkUser,
     updateInput
   }
 )(Auth);
