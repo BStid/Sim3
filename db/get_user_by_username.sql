@@ -1,2 +1,3 @@
-SELECT *
-FROM Helo_Users;
+SELECT username
+FROM helo_users
+WHERE username = $1;

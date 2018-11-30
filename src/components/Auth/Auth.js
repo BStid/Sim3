@@ -1,68 +1,47 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
 import { checkUser, updateInput } from "../../redux/reducer";
-import smile from "./pictures/smile.png";
+import LoginInfo from "./LoginContainer/LoginInfo";
+import Register from "./LoginContainer/Register";
 import "./Auth.css";
 
 class Auth extends Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = { redirect: false, register: false };
+
     this.checkUser = this.checkUser.bind(this);
+    this.toggleRegister = this.toggleRegister.bind(this);
   }
-  async checkUser() {
-    const { usernameInput, passwordInput, user } = this.props;
-    console.log(user);
-    console.log(usernameInput);
-    await this.props.checkUser(usernameInput, passwordInput);
-    console.log(user);
+  async checkUser(username, password) {
+    await this.props.checkUser(username, password);
     await this.evaluateUsername();
-    console.log(user);
   }
+
+  toggleRegister = () => {
+    this.setState({ register: true });
+  };
   evaluateUsername() {
     const { user, usernameInput } = this.props;
     user === usernameInput
-      ? alert("Success")
+      ? this.setState({ redirect: true })
       : alert("Username or Password Incorrect, please sign up.");
   }
-  //TODO WHEN YOU GET BACK: Look up ways to redirect based off of true/false when button is pressed. Google 'redirect based on password'
-  //TODO: Fix checkUser to actually check the right value of user instead of automatically going to true;
+
   render() {
-    const { usernameInput, passwordInput, user } = this.props;
+    const { register } = this.state;
     return (
       <div className="authOuter">
         <div className="authLoginContainer">
-          <img src={smile} alt="smile" className="smileyIcon" />
-          <h1>Helo</h1>
-          <div className="inputContainer">
-            <p>Username: </p>
-            <input
-              type="text"
-              name="usernameInput"
-              onChange={e => this.props.updateInput(e)}
+          {!register ? (
+            <LoginInfo
+              checkUser={this.checkUser}
+              redirect={this.state.redirect}
+              toggleRegister={this.toggleRegister}
             />
-          </div>
-          <div className="inputContainer">
-            <p>Password: </p>
-            <input
-              type="password"
-              name="passwordInput"
-              onChange={e => this.props.updateInput(e)}
-            />
-          </div>
-          <div className="loginButtonContainer">
-            <button
-              className="button"
-              id="login"
-              onClick={() => this.checkUser(usernameInput, passwordInput)}
-            >
-              Login
-            </button>{" "}
-            <button className="button" id="register">
-              Register
-            </button>
-          </div>
+          ) : (
+            <Register />
+          )}
         </div>
       </div>
     );
@@ -70,7 +49,6 @@ class Auth extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log(state);
   return state;
 };
 

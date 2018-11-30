@@ -3,12 +3,17 @@ import axios from "axios";
 //ACTION TYPES
 const CHECK_USER = "CHECK_USER";
 const UPDATE_INPUT = "UPDATE_INPUT";
+const REGISTER_USER = "REGISTER_USER";
 
 //INITIAL STATE
 const initialState = {
   user: "",
   usernameInput: "",
-  passwordInput: ""
+  passwordInput: "",
+  usernameRegisterInput: "",
+  passwordRegisterInput: "",
+  errorMessage: false,
+  redirect: false
 };
 //ACTION CREATORS
 export const updateInput = input => {
@@ -17,6 +22,7 @@ export const updateInput = input => {
     payload: input
   };
 };
+
 //POST
 export const checkUser = (username, password) => {
   return {
@@ -24,6 +30,13 @@ export const checkUser = (username, password) => {
     payload: axios.post("/api/user", { username, password })
   };
 };
+export const registerUser = (username, password) => {
+  return {
+    type: REGISTER_USER,
+    payload: axios.post("/api/newuser", { username, password })
+  };
+};
+
 //REDUCER
 export default function reducer(state = initialState, action) {
   console.log(action.type);
@@ -40,7 +53,6 @@ export default function reducer(state = initialState, action) {
         user: ""
       };
     case `${CHECK_USER}_FULFILLED`:
-      console.log(action.payload.data);
       return {
         ...state,
         user: action.payload.data
@@ -50,5 +62,22 @@ export default function reducer(state = initialState, action) {
         ...state,
         user: ""
       };
+    case `${REGISTER_USER}_PENDING`:
+      return {
+        ...state
+      };
+    case `${REGISTER_USER}_FULFILLED`:
+      console.log(action.payload);
+      return {
+        ...state,
+        errorMessage: action.payload.data[0],
+        user: action.payload.data[1]
+      };
+    case `${REGISTER_USER}_REJECTED`:
+      return {
+        ...state
+      };
+    default:
+      return state;
   }
 }
